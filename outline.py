@@ -42,9 +42,14 @@ imageRatio = img.width / img.height
 frameRatio = WIDTH / HEIGHT
 
 scale = 0
-drawWidth = 0
-drawHeight = 0
 startPosition = (0, 0)
+xScale = img.width / WIDTH
+yScale = img.height / HEIGHT
+
+scale = xScale if xScale > yScale else yScale
+
+drawWidth = (img.width / scale) / QUALITY
+drawHeight = (img.height / scale) / QUALITY
 
 if imageRatio == frameRatio:
     scale = WIDTH / img.width
