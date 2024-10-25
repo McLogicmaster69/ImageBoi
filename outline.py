@@ -7,9 +7,8 @@ import math
 
 TOPLEFT = (665, 334)
 BOTTOMRIGHT = (1574, 842)
-WIDTH = 909
-HEIGHT = 508
-QUALITY = 3
+WIDTH = BOTTOMRIGHT[0] - TOPLEFT[0]
+HEIGHT = BOTTOMRIGHT[1] - TOPLEFT[1]
 
 colors = [\
     SelectableColor(0, 0, 0, 517, 423, 1),\
@@ -40,10 +39,116 @@ def Click():
 def Move(position):
     mouse.position = position
 
+def PositionSetup():
+    print("Hover your mouse as close as you can to the top left")
+    print("Do not worry if not exact, this can be changed to be made more precise")
+    print("Press enter once happy with position")
+    input()
+    TOPLEFT = mouse.position
+
+    print("Hover your mouse as close as you can to the bottom right")
+    print("Do not worry if not exact, this can be changed to be made more precise")
+    print("Press enter once happy with position")
+    input()
+    BOTTOMRIGHT = mouse.position
+
+    print("You are now editing the top left position marker position x")
+    print("Input how much you want to change the value by")
+    print("Try and find the point where the mouse become the drawing cursor")
+    print("Once found, leave the input blank and hit enter")
+
+    while True:
+        Move(TOPLEFT)
+        inp = input()
+        if inp == "":
+            break
+        else:
+            try:
+                nInp = int(inp)
+                TOPLEFT = (TOPLEFT[0] + nInp, TOPLEFT[1])
+            except:
+                pass
+    print("You are now editing the top left position marker position y")
+    print("Input how much you want to change the value by")
+    print("Try and find the point where the mouse become the drawing cursor")
+    print("Once found, leave the input blank and hit enter")
+
+    while True:
+        Move(TOPLEFT)
+        inp = input()
+        if inp == "":
+            break
+        else:
+            try:
+                nInp = int(inp)
+                TOPLEFT = (TOPLEFT[0], TOPLEFT[1] + nInp)
+            except:
+                pass
+
+    print("You are now editing the bottom right position marker position x")
+    print("Input how much you want to change the value by")
+    print("Try and find the point where the mouse become the drawing cursor")
+    print("Once found, leave the input blank and hit enter")
+
+    while True:
+        Move(BOTTOMRIGHT)
+        inp = input()
+        if inp == "":
+            break
+        else:
+            try:
+                nInp = int(inp)
+                BOTTOMRIGHT = (BOTTOMRIGHT[0] + nInp, BOTTOMRIGHT[1])
+            except:
+                pass
+    print("You are now editing the bottom right position marker position y")
+    print("Input how much you want to change the value by")
+    print("Try and find the point where the mouse become the drawing cursor")
+    print("Once found, leave the input blank and hit enter")
+
+    while True:
+        Move(BOTTOMRIGHT)
+        inp = input()
+        if inp == "":
+            break
+        else:
+            try:
+                nInp = int(inp)
+                BOTTOMRIGHT = (BOTTOMRIGHT[0], BOTTOMRIGHT[1] + nInp)
+            except:
+                pass
+
+    print("Setup is complete")
+    print(f"Top left position is {TOPLEFT}")
+    print(f"Bottom right position is {BOTTOMRIGHT}")
+    print("If you wish for these to be saved, change the values in the code to reflect the above values")
+
+
+### SETUP
+
+print("Play gartic phone at https://garticphone.com/")
+print("Setting up frame")
+print("Use code default values (0) run set up process (1)")
+
+while True:
+    inp = input()
+    if inp == "0":
+        pass
+    elif inp == "1":
+        PositionSetup()
+    else:
+        print("Invalid input")
+        continue
+    break
+
+### FILE AND SCALE
+
 print("Input the file")
 filename = input()
 img = Image.open(filename)
 rgb_img = img.convert('RGB')
+print("Input quality")
+quality = int(input())
 
 imageRatio = img.width / img.height
 frameRatio = WIDTH / HEIGHT
@@ -55,9 +160,9 @@ yScale = img.height / HEIGHT
 
 scale = xScale if xScale > yScale else yScale
 
-drawWidth = math.floor((img.width / scale) / QUALITY)
-drawHeight = math.floor((img.height / scale) / QUALITY)
-startPosition = (math.floor(1119.5 - (drawWidth * QUALITY) / 2), math.floor(588 - (drawHeight * QUALITY) / 2))
+drawWidth = math.floor((img.width / scale) / quality)
+drawHeight = math.floor((img.height / scale) / quality)
+startPosition = (math.floor(1119.5 - (drawWidth * quality) / 2), math.floor(588 - (drawHeight * quality) / 2))
 Move(startPosition)
 
 def GetPixel(x, y):
@@ -72,14 +177,14 @@ black_and_white_grid = []
 
 for x in range(drawWidth):
     column = []
-    print(f"{round((x) / (drawWidth) * 100, 2)}% at x position of {math.floor(x * QUALITY * scale)} out of {img.width}", end = "\r")
+    print(f"{round((x) / (drawWidth) * 100, 2)}% at x position of {math.floor(x * quality * scale)} out of {img.width}", end = "\r")
     for y in range(drawHeight):
         sum = 0
-        for tx in range(math.floor(QUALITY * scale)):
-            for ty in range(math.floor(QUALITY * scale)):
-                pixel = GetPixel(math.floor(x * QUALITY * scale + tx), math.floor(y * QUALITY * scale + ty))
+        for tx in range(math.floor(quality * scale)):
+            for ty in range(math.floor(quality * scale)):
+                pixel = GetPixel(math.floor(x * quality * scale + tx), math.floor(y * quality * scale + ty))
                 sum += pixel[0] + pixel[1] + pixel[2]
-        column.append(False if sum / ((QUALITY ** 2) * 3) < 127.5 else True)
+        column.append(False if sum / ((quality ** 2) * 3) < 127.5 else True)
     black_and_white_grid.append(column)
 
 ### GENERATE OUTLINES
@@ -125,7 +230,7 @@ input()
 ### DRAW
     
 def FormatPosition(startPosition, x, y):
-    return (startPosition[0] + x * QUALITY, startPosition[1] + y * QUALITY)
+    return (startPosition[0] + x * quality, startPosition[1] + y * quality)
 
 def SelectColor(x, y):
     if not outline[x][y]:
